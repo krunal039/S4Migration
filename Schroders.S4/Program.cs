@@ -1,3 +1,5 @@
+using Schroders.S4;
+
 namespace Schroders
 {
     internal static class Program
@@ -11,7 +13,8 @@ namespace Schroders
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            Application.Run(new S4Move());
+            Application.Run(new S4_Home());
+            
         }
     }
 }

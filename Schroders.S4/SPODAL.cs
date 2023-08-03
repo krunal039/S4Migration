@@ -19,7 +19,7 @@ namespace Schroders.S4
             MigrationUser? migrationUser = null;
             if (userName == null) throw new ArgumentNullException(nameof(userName));
 
-            var results = SchrodersGraphClient.Sites[_siteId].Lists[_questionListId].Items.GetAsync((requestConfiguration) =>
+            var results = SchrodersGraphClient.Sites[_siteId].Lists[_bookmarkListId].Items.GetAsync((requestConfiguration) =>
             {
                 requestConfiguration.QueryParameters.Filter = $"Fields/User eq '{userName}'";
                 requestConfiguration.QueryParameters.Expand = new string[] { $"Fields" };
@@ -73,7 +73,7 @@ namespace Schroders.S4
                         "_x0049_sS4", isS4
                     },
                     {
-                        "IsBookMarkUpdate", localFileCopy
+                        "IsBookMarkUpdate", isBookMarkUpdate
                     },
                     {
                         "LocalFileCopy", localFileCopy
@@ -134,9 +134,9 @@ namespace Schroders.S4
         }
 
 
-        internal async Task<List<MigationQuestion?>> GetQuestionsSpoAsync()
+        internal Task<List<MigationQuestion?>> GetQuestionsSpoAsync()
         {
-            return await Task.Run(() => GetQuestionsFromSpo());
+            return Task.Run(() => GetQuestionsFromSpo());
 
         }
 
@@ -155,10 +155,10 @@ namespace Schroders.S4
 
         }
 
-        internal async Task<MigrationUser?> GetUserDateFromSpoAsync(string userName)
+        internal Task<MigrationUser?> GetUserDateFromSpoAsync(string userName)
         {
             if (userName == null) throw new ArgumentNullException(nameof(userName));
-            return await Task.Run(() => GetUserDateFromSpo(userName));
+            return Task.Run(() => GetUserDateFromSpo(userName));
 
         }
 

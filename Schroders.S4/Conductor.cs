@@ -17,28 +17,37 @@ namespace Schroders.S4
             _bookmarkManager = new BookmarkManager();
         }
 
-        protected string GetUserName()
+        internal string GetUserName()
         {
             return Environment.UserName;
         }
 
-        protected bool IsUserBookmarkCopiedToSpo(string userName)
+        internal bool IsUserBookmarkCopiedToSpo(string userName)
         {
             return _graphClient.GetUserDateFromSpoAsync(userName).Result != null;
         }
 
-        protected bool AddUserBookmarkToSpo(MigrationUser user)
+        internal bool AddUserBookmarkToSpo(MigrationUser user)
         {
-           return _graphClient.AddUserDataAsync(user.User, user.IsBookMarkUpdate, user.IsS3, user.IsS4,
-                user.LocalFileCopy, user.ChromeBookMarks, user.EdgeBookMarks).Result != null;
+            var userData = GetUserBookmarkFromSpo(user.User);
+            if (userData == null)
+            {
+                return _graphClient.AddUserDataAsync(user.User, user.IsBookMarkUpdate, user.IsS3, user.IsS4,
+                    user.LocalFileCopy, user.ChromeBookMarks, user.EdgeBookMarks).Result != null;
+            }
+            else
+            {
+                return _graphClient.UpdateUserDataAsync(userData.UserId, user.User, user.IsBookMarkUpdate, user.IsS4, user.IsS4,
+                    user.LocalFileCopy, user.ChromeBookMarks, user.EdgeBookMarks).Result != null;
+            }
         }
 
-        protected MigrationUser? GetUserBookmarkFromSpo(string userName)
+        internal MigrationUser? GetUserBookmarkFromSpo(string userName)
         {
            return _graphClient.GetUserDateFromSpoAsync(userName).Result;
         }
 
-        protected bool UpdateUserBookmarkToSpo(MigrationUser user)
+        internal bool UpdateUserBookmarkToSpo(MigrationUser user)
         {
             if (user.User == null) return false;
             var userData = GetUserBookmarkFromSpo(user.User);
@@ -46,12 +55,7 @@ namespace Schroders.S4
                 user.LocalFileCopy, user.ChromeBookMarks, user.EdgeBookMarks).Result != null;
         }
 
-        protected string MergeChromeEdgeBookmark(string userName)
-        {
-            return Newtonsoft.Json.JsonConvert.SerializeObject(_bookmarkManager.MergeChromeEdgeBookmark());
-        }
-
-        protected void SaveUserBookmarkS3()
+        internal void SaveUserBookmarkS3()
         {
             var migrationUser = new MigrationUser()
             {
@@ -66,6 +70,21 @@ namespace Schroders.S4
             };
 
             AddUserBookmarkToSpo(migrationUser);
+        }
+
+        internal void MergeAndSaveBookmark()
+        {
+            try
+            {
+                var userData = GetUserBookmarkFromSpo(GetUserName());
+                _bookmarkManager.SaveEdgeBookmark(_bookmarkManager.MergeChromeEdgeBookmark(userData.ChromeBookMarks, Newtonsoft.Json.JsonConvert.SerializeObject(_bookmarkManager.GetEdgeBookmark())));
+                userData.IsS4 = true;
+                userData.IsBookMarkUpdate = true;
+                UpdateUserBookmarkToSpo(userData);
+            }
+            catch (Exception ex)
+            {
+            }
         }
 
     }

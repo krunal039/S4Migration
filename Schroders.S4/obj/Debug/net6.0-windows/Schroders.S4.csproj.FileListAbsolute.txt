@@ -59,4 +59,6 @@ C:\Source\Schroders.S4\Schroders.S4\bin\Debug\net6.0-windows\Microsoft.Kiota.Ser
 C:\Source\Schroders.S4\Schroders.S4\bin\Debug\net6.0-windows\System.IdentityModel.Tokens.Jwt.dll
 C:\Source\Schroders.S4\Schroders.S4\bin\Debug\net6.0-windows\Tavis.UriTemplates.dll
 C:\Source\Schroders.S4\Schroders.S4\bin\Debug\net6.0-windows\Newtonsoft.Json.dll
-C:\Source\Schroders.S4\Schroders.S4\obj\Debug\net6.0-windows\Schroders.S4Home.resources
+C:\Source\Schroders.S4\Schroders.S4\obj\Debug\net6.0-windows\Schroders.S4.Feedback.resources
+C:\Source\Schroders.S4\Schroders.S4\obj\Debug\net6.0-windows\Schroders.S4.S3_Home.resources
+C:\Source\Schroders.S4\Schroders.S4\obj\Debug\net6.0-windows\Schroders.S4.S4_Home.resources

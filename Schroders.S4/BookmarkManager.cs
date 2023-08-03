@@ -28,6 +28,8 @@ namespace Schroders.S4
             var edgeBookmarkFilePath = $@"{_userAppDateLocation}\Microsoft\Edge\User Data\Default\Bookmarks";
             var content = Newtonsoft.Json.JsonConvert.SerializeObject(file);
             File.WriteAllText(edgeBookmarkFilePath,content);
+            File.WriteAllText($@"{_userAppDateLocation}\Microsoft\Edge\User Data\Default\Bookmarks.bak", content);
+            File.WriteAllText($@"{_userAppDateLocation}\Microsoft\Edge\User Data\Default\Bookmarks.msbak", content);
         }
 
         internal BookmarkFile? GetEdgeBookmark()
@@ -37,10 +39,20 @@ namespace Schroders.S4
             return Newtonsoft.Json.JsonConvert.DeserializeObject<BookmarkFile>(content);
         }
 
-        internal BookmarkFile MergeChromeEdgeBookmark()
+        internal bool RemoveEdgeMSBookmarkBackup()
         {
-            var chromeBm = GetChromeBookmark();
-            var edgeBm = GetEdgeBookmark();
+            File.Delete(($@"{_userAppDateLocation}\Microsoft\Edge\User Data\Default\Bookmarks.bak"));
+            File.Delete(($@"{_userAppDateLocation}\Microsoft\Edge\User Data\Default\Bookmarks.msbak"));
+
+            return true;
+        }
+
+        internal BookmarkFile MergeChromeEdgeBookmark(string chromeBookmark, string edgeBoomark)
+        {
+            RemoveEdgeMSBookmarkBackup();
+            var chromeBm = Newtonsoft.Json.JsonConvert.DeserializeObject<BookmarkFile>(chromeBookmark);
+            var edgeBm = Newtonsoft.Json.JsonConvert.DeserializeObject<BookmarkFile>(edgeBoomark);
+
             var chromeImportBookmarkBar = chromeBm?.roots.bookmark_bar;
 
             edgeBm?.roots.bookmark_bar.children.Add(new Child()
